@@ -5,8 +5,11 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path"
 	"path/filepath"
+	"regexp"
 	"strings"
+	"time"
 
 	"github.com/akrck02/littlestyles/configuration"
 	"github.com/akrck02/littlestyles/data"
@@ -14,6 +17,8 @@ import (
 
 // Minify the css file.
 func Minify(config *configuration.Configuration) {
+
+  startTime := time.Now()
 
   println("Minifying the CSS files with the following configuration.")
   configuration.Print(config)
@@ -49,8 +54,11 @@ func Minify(config *configuration.Configuration) {
   defer outputFile.Close()
 
   // Access the file
-  println(fmt.Sprintf("\nStarting to access file tree from %s", config.Input))
+  println(fmt.Sprintf("\nFile tree from %s", config.Input))
   access(config, inputFile, outputFile)
+
+  // Log the processing 22:30
+  println(fmt.Sprintf("File processed in %dms.", time.Now().Sub(startTime).Milliseconds()))
 
 }
 
@@ -87,10 +95,8 @@ func access(config *configuration.Configuration, currentFile *os.File, outputFil
 // Add file contents to master file.
 func addToFile(config *configuration.Configuration, currentPath string, currentFile *os.File, outputFile *os.File) {
 
-  println()
-  println(fmt.Sprintf("Checking out file    %s", currentFile.Name()))
-  println("--------------------------------------")
-
+  // println(fmt.Sprintf("⤷ %s", path.Clean(currentFile.Name())))
+  
   // read the file line by line using scanner
   scanner := bufio.NewScanner(currentFile)
   for scanner.Scan() {
@@ -99,34 +105,27 @@ func addToFile(config *configuration.Configuration, currentPath string, currentF
     if strings.Contains(line, "@import") && !strings.Contains(line, "http") {      
 
       // Get the referenced url inside @import statements
-      line = strings.ReplaceAll(line, "@import", "")
-      line = strings.ReplaceAll(line, "\"", "")
-      line = strings.ReplaceAll(line, ";","")
-      println(fmt.Sprintf("⤷ Import line       %s", line))
+      line = getImportUrlFromLine(line)
+      if "" == line {
+        println("⤷ Line ignored.")
+        break // ignore
+      }
 
-      url := strings.ReplaceAll(line, "url(", "")
-      url = strings.ReplaceAll(line, "(", "")
-      url = strings.ReplaceAll(line, ")", "")
-      url = strings.TrimSpace(line)
-
-      println(fmt.Sprintf("⤷ Attempting to open %s", url))
-
+      // Check current file  
       _, err := currentFile.Stat()
       if nil != err {
         log.Fatal(err)
       }
 
       // Get local url inside statement as local path
-      referencedUrl := fmt.Sprintf("%s/%s", currentPath, url)
-      println(fmt.Sprintf("⤷ Referenced url     %s", referencedUrl))
-
+      referencedUrl := fmt.Sprintf("%s/%s", currentPath, line)
       referencedFile, err := os.Open(referencedUrl)
       if nil != err {
         log.Fatal(err)
       }
 
       // Add file content to file
-      addToFile(config, url, referencedFile, outputFile)
+      addToFile(config, path.Dir(referencedUrl), referencedFile, outputFile)
 
     } else {
 
@@ -135,17 +134,31 @@ func addToFile(config *configuration.Configuration, currentPath string, currentF
         break
       }
 
-      //outputFile.WriteString(line)
-      print(line)
+      outputFile.WriteString(line + " ")
       if true == config.Readable {
-        println()
-        //outputFile.WriteString("\n")
+        outputFile.WriteString("\n")
       }
     }
   }
+
   if err := scanner.Err(); err != nil {
-        log.Fatal(err)
+    log.Fatal(err)
   }
+}
+
+// Get import url line 
+func getImportUrlFromLine(line string) string {
+  
+  standardImportRegex, _ := regexp.Compile(`(?mi)("(.*?)")`)
+  matches := standardImportRegex.FindAllStringSubmatch(line, -1)
+
+  // If an url is present return.
+  if 0 != len(matches) {
+    return matches[0][2]
+  }
+
+  // if not found, return empty.
+  return ""
 }
 
 // Trim line 

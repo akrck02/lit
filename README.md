@@ -1,16 +1,16 @@
-# LittleStyles
-A little css minifier made in java ;)   
+# Lit
+Lightweight css minifier made in golang ;)   
 
 ## Configuration file
-```styleconfig
-  input:      ./your/input/url.css
-  output:     ./your/output/directory
-  name:       master.css
-  readable:   false
+```env
+  INPUT=/your/input/url.css
+  OUTPUT=/your/output/directory
+  NAME=master.css
+  READABLE=false
 ```
 
-## Using LittleStyles
+## Using Lit
 Use the latest binary with
 ```shell
-  java -jar ./lit-v1.0.jar
+  ./lit -f /your/config/file.env
 ``` 

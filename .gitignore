@@ -1,7 +1,3 @@
-test
-bin
-*.class
+styles.env
 out
-lit.jar
-LittleStyles.jar
-v*.*.jar
+test

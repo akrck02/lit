@@ -7,7 +7,7 @@ import (
 )
 
 // Log app title to standard output
-func log_app_title() {
+func logAppTitle() {
   println("-------------------------------------")
 	println("     Little styles by akrck02        ")
 	println("-------------------------------------")
@@ -18,35 +18,35 @@ func log_app_title() {
 // Main command handle
 func main() {
 
-  log_app_title()
+  logAppTitle()
 
   // Set flags for the cli tool 
-	config_path_flag := flag.String("f", "", "-f ./my/string")
-  help_path_flag := flag.String("h", "-", "-h")
+	configPathFlag := flag.String("f", "", "-f ./my/string")
+  helpPathFlag := flag.String("h", "-", "-h")
 	flag.Parse()
 
   // Open help if help flag is present.
-	if "-" != *help_path_flag {
+	if "-" != *helpPathFlag {
 	  command.Help()
 		return
 	}
 
   // Load configuration from file and minify the files.
-  config_path := *config_path_flag
-  if "" != config_path {
-    current_configuration, err := command.LoadFromFile(config_path)
+  configPath := *configPathFlag
+  if "" != configPath {
+    config, err := command.LoadFromFile(configPath)
 
     if nil != err {
       println("ERROR: Could not load configuration from file.")
       return
     }
     
-    command.Minify(current_configuration)
+    command.Minify(config)
     return 
   } 
 
   // Minify the CSS files using default configuration.
-  current_configuration := configuration.Default() 
-  command.Minify(current_configuration)
+  config := configuration.Default() 
+  command.Minify(config)
 
 }

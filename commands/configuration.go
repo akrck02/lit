@@ -8,6 +8,6 @@ func Generate() {
 }
 
 // Load a configuration from file
-func LoadFromFile(file_path string) (*configuration.Configuration, error) {
-  return configuration.ParseFromEnv(file_path)
+func LoadFromFile(filePath string) (*configuration.Configuration, error) {
+  return configuration.ParseFromEnv(filePath)
 }

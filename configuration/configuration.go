@@ -26,9 +26,9 @@ func Default() *Configuration {
 }
 
 // Parse configuration from file
-func ParseFromEnv(file_path string) (*Configuration, error) {
+func ParseFromEnv(filePath string) (*Configuration, error) {
 
-  err := godotenv.Load(file_path)
+  err := godotenv.Load(filePath)
   if nil != err {
     return nil, err
   }
@@ -44,21 +44,21 @@ func ParseFromEnv(file_path string) (*Configuration, error) {
 }
 
 // Generate an env file with current configuration
-func GenerateEnv(configuration *Configuration) {
+func GenerateEnv(config *Configuration) {
   godotenv.Marshal(map[string]string {
-    "INPUT" : configuration.Input,
-    "OUTPUT" : configuration.Output,
-    "NAME" : configuration.Name,
-    "READABLE" : fmt.Sprintf("%t", configuration.Readable),
+    "INPUT" : config.Input,
+    "OUTPUT" : config.Output,
+    "NAME" : config.Name,
+    "READABLE" : fmt.Sprintf("%t", config.Readable),
   })
 }
 
 // Print the configuration in standard info
-func Print(configuration *Configuration) {
-  println(fmt.Sprintf("Input: %s", configuration.Input))
-  println(fmt.Sprintf("Ouput: %s", configuration.Output))
-  println(fmt.Sprintf("Name: %s", configuration.Name))
-  println(fmt.Sprintf("Readable: %t", configuration.Readable))
+func Print(config *Configuration) {
+  println(fmt.Sprintf("Input: %s", config.Input))
+  println(fmt.Sprintf("Ouput: %s", config.Output))
+  println(fmt.Sprintf("Name: %s", config.Name))
+  println(fmt.Sprintf("Readable: %t", config.Readable))
 }
 
 

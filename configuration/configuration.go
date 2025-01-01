@@ -55,10 +55,10 @@ func GenerateEnv(config *Configuration) {
 
 // Print the configuration in standard info
 func Print(config *Configuration) {
-  println(fmt.Sprintf("Input: %s", config.Input))
-  println(fmt.Sprintf("Ouput: %s", config.Output))
-  println(fmt.Sprintf("Name: %s", config.Name))
-  println(fmt.Sprintf("Readable: %t", config.Readable))
+  println(fmt.Sprintf("⤷ Input:    %s", config.Input))
+  println(fmt.Sprintf("⤷ Ouput:    %s", config.Output))
+  println(fmt.Sprintf("⤷ Name:     %s", config.Name))
+  println(fmt.Sprintf("⤷ Readable: %t", config.Readable))
 }
 
 

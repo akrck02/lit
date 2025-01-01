@@ -15,7 +15,7 @@ import (
 // Minify the css file.
 func Minify(config *configuration.Configuration) {
 
-  println("Minifying the CSS files with the following configuration:")
+  println("Minifying the CSS files with the following configuration.")
   configuration.Print(config)
 
   // If input file does not exists, raise an error
@@ -27,7 +27,7 @@ func Minify(config *configuration.Configuration) {
   inputFile, err := os.Open(config.Input)
 
   // If the output directory does not exists, create it.
-  if !data.PathExists(config.Output) {
+  if !data.PathExists(config.Output) { 
     err := os.MkdirAll(config.Output, os.ModePerm)
     if nil != err {
       println(fmt.Sprintf("ERROR: Cannot create output directory %s.", config.Output))    
@@ -87,8 +87,10 @@ func access(config *configuration.Configuration, currentFile *os.File, outputFil
 // Add file contents to master file.
 func addToFile(config *configuration.Configuration, currentPath string, currentFile *os.File, outputFile *os.File) {
 
-  println(fmt.Sprintf("Checking out file %s", currentFile.Name()))
-  
+  println()
+  println(fmt.Sprintf("Checking out file    %s", currentFile.Name()))
+  println("--------------------------------------")
+
   // read the file line by line using scanner
   scanner := bufio.NewScanner(currentFile)
   for scanner.Scan() {
@@ -100,7 +102,7 @@ func addToFile(config *configuration.Configuration, currentPath string, currentF
       line = strings.ReplaceAll(line, "@import", "")
       line = strings.ReplaceAll(line, "\"", "")
       line = strings.ReplaceAll(line, ";","")
-      println(fmt.Sprintf("⤷ Import line: %s", line))
+      println(fmt.Sprintf("⤷ Import line       %s", line))
 
       url := strings.ReplaceAll(line, "url(", "")
       url = strings.ReplaceAll(line, "(", "")
@@ -116,7 +118,7 @@ func addToFile(config *configuration.Configuration, currentPath string, currentF
 
       // Get local url inside statement as local path
       referencedUrl := fmt.Sprintf("%s/%s", currentPath, url)
-      println(fmt.Sprintf("⤷ Referenced url: %s", referencedUrl))
+      println(fmt.Sprintf("⤷ Referenced url     %s", referencedUrl))
 
       referencedFile, err := os.Open(referencedUrl)
       if nil != err {

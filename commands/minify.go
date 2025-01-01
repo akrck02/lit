@@ -97,13 +97,15 @@ func addToFile(config *configuration.Configuration, currentPath string, currentF
     if strings.Contains(line, "@import") && !strings.Contains(line, "http") {      
 
       // Get the referenced url inside @import statements
-      startStringIndex := strings.Index(line, "@import") + 7
+      line = strings.ReplaceAll(line, "@import", "")
       line = strings.ReplaceAll(line, "\"", "")
+      line = strings.ReplaceAll(line, ";","")
       println(fmt.Sprintf("⤷ Import line: %s", line))
 
-      url := substr(line, startStringIndex, len(line))
-      url = strings.Trim(line, "(")
-      url = strings.Trim(line, ")")
+      url := strings.ReplaceAll(line, "url(", "")
+      url = strings.ReplaceAll(line, "(", "")
+      url = strings.ReplaceAll(line, ")", "")
+      url = strings.TrimSpace(line)
 
       println(fmt.Sprintf("⤷ Attempting to open %s", url))
 
@@ -114,13 +116,14 @@ func addToFile(config *configuration.Configuration, currentPath string, currentF
 
       // Get local url inside statement as local path
       referencedUrl := fmt.Sprintf("%s/%s", currentPath, url)
+      println(fmt.Sprintf("⤷ Referenced url: %s", referencedUrl))
+
       referencedFile, err := os.Open(referencedUrl)
       if nil != err {
         log.Fatal(err)
       }
 
       // Add file content to file
-      print(url)
       addToFile(config, url, referencedFile, outputFile)
 
     } else {
@@ -150,7 +153,7 @@ func trimLine(line string) string {
 }
 
 // NOTE: this isn't multi-Unicode-codepoint aware, like specifying skintone or
-//       gender of an emoji: https://unicode.org/emoji/charts/full-emoji-modifiers.html
+// gender of an emoji: https://unicode.org/emoji/charts/full-emoji-modifiers.html
 func substr(input string, start int, length int) string {
     asRunes := []rune(input)
     

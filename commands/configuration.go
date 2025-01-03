@@ -1,10 +1,17 @@
 package command
 
-import "github.com/akrck02/littlestyles/configuration"
+import (
+	"fmt"
+	"time"
+
+	"github.com/akrck02/littlestyles/configuration"
+)
 
 // Generate a new configuration file.
 func Generate() {
+  startTime := time.Now()
   configuration.GenerateEnv(configuration.Default())
+  println(fmt.Sprintf("Config file styles.env generated in %dµs.", time.Now().Sub(startTime).Microseconds()))
 }
 
 // Load a configuration from file

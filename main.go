@@ -2,51 +2,62 @@ package main
 
 import (
 	"flag"
+
 	command "github.com/akrck02/littlestyles/commands"
 	"github.com/akrck02/littlestyles/configuration"
 )
 
 // Log app title to standard output
 func logAppTitle() {
-  println("-------------------------------------")
+	println("-------------------------------------")
 	println("     Little styles by akrck02        ")
 	println("-------------------------------------")
 	println()
 }
 
-
 // Main command handle
 func main() {
 
-  logAppTitle()
+	logAppTitle()
 
-  // Set flags for the cli tool 
+	// Set flags for the cli tool
 	configPathFlag := flag.String("f", "", "-f ./my/string")
-  helpPathFlag := flag.String("h", "-", "-h")
+	helpPathFlag := flag.Bool("h", false, "-h")
+	generateConfigFlag := flag.Bool("g", false, "-g")
+	traceConfigFlag := flag.Bool("t", false, "-t")
 	flag.Parse()
 
-  // Open help if help flag is present.
-	if "-" != *helpPathFlag {
-	  command.Help()
+	// Open help if help flag is present.
+	if true == *helpPathFlag {
+		command.Help()
 		return
 	}
 
-  // Load configuration from file and minify the files.
-  configPath := *configPathFlag
-  if "" != configPath {
-    config, err := command.LoadFromFile(configPath)
+	// Generate configuration if flag is present
+	if true == *generateConfigFlag {
+		command.Generate()
+		return
+	}
 
-    if nil != err {
-      println("ERROR: Could not load configuration from file.")
-      return
-    }
-    
-    command.Minify(config)
-    return 
-  } 
+	// Load configuration from file and minify the files.
+	configPath := *configPathFlag
+	if "" != configPath {
+		config, err := command.LoadFromFile(configPath)
 
-  // Minify the CSS files using default configuration.
-  config := configuration.Default() 
-  command.Minify(config)
+		if nil != err {
+			println("ERROR: Could not load configuration from file.")
+			return
+		}
+
+		// Trace if flag is present
+		config.Trace = *traceConfigFlag
+		command.Minify(config)
+		return
+	}
+
+	// Minify the CSS files using default configuration.
+	config := configuration.Default()
+	config.Trace = *traceConfigFlag
+	command.Minify(config)
 
 }
